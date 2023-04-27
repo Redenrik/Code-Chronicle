@@ -1,27 +1,34 @@
 # Code Chronicle
 
-Code Chronicle is a Python-based project explorer that generates file indices and script summaries from a chosen directory. The user-friendly GUI, built with PyQt5, allows users to browse folders, select options, and create outputs. Gitignore patterns are respected for accurate file parsing.
+Code Chronicle is a Python-based project explorer that generates file indices and script summaries while respecting .gitignore patterns. The project contains a user-friendly GUI built with PyQt5, allowing users to browse folders, select options, and create outputs. This tool can simplify the process of providing full projects to language models (e.g., GPT) as input, by aggregating relevant code and text files into a single summary file.
 
-## Requirements
+## Installation and Usage
+
+### Prerequisites
+
 - Python 3.x
-- PyQt5
-- pyinstaller (optional, for creating executable)
+- pip (Python package manager)
 
-## Installation
+### Install and Run
+
 1. Clone the repository or download the source code.
-2. Create a virtual environment (optional): `python -m venv env`
-3. Activate the virtual environment: `source env/bin/activate` (Linux/Mac) or `env\Scripts\activate.bat` (Windows)
-4. Install dependencies: `pip install -r requirements.txt`
+2. Navigate to the Code Chronicle folder.
+3. Double-click on `run.bat` to install the required dependencies and launch the application in one shot.
 
-## Usage
-1. Run the script: `python src/gui.py`
-2. Browse and select a project folder.
-3. Choose the desired options: Generate script summary and/or Generate file index.
-4. Click 'Generate' to create the output files in the 'chronicle-history' folder.
-5. View the generated files with the 'History' button or by navigating to the 'chronicle-history' folder.
+The `run.bat` script will:
 
-## Project Structure
-- `src/gui.py`: Main script with PyQt5 GUI implementation.
-- `src/file_explorer_summary.py`: Functions for file exploration, gitignore pattern handling, and output generation.
-- `run.bat`: Batch script for setting up the virtual environment, installing dependencies, and running the script (Windows).
-- `requirements.txt`: List of required Python packages.
+- Create a virtual environment (if not already present) in the project folder.
+- Activate the virtual environment.
+- Install the required dependencies from `requirements.txt`.
+- Run the Project Explorer script (gui.py).
+
+## Features
+
+- Browse and select a project folder.
+- Generate a script summary that consolidates relevant code and text files, making it easy to provide full projects to language models as input.
+- Generate a file index that lists all files in the project, excluding those specified in the .gitignore file.
+- Automatically saves output files to a "chronicle-history" folder.
+
+## Contributing
+
+Feel free to submit issues, feature requests, or pull requests. Your feedback and contributions are welcome and appreciated.
