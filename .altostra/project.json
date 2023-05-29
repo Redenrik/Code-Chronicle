@@ -1,0 +1,21 @@
+{
+  "id": "Code-Chronicle-cg10ty5",
+  "name": "Code-Chronicle",
+  "created": "2023-05-29T19:40:20.368Z",
+  "description": "",
+  "blueprints": [
+    {
+      "version": "2019-10-24",
+      "connections": {},
+      "resources": {},
+      "metadata": {
+        "designer": {
+          "resourcePositions": {}
+        }
+      },
+      "id": "Code-Chronicle-cf00toe",
+      "name": "Code-Chronicle"
+    }
+  ],
+  "type": "altostra"
+}
