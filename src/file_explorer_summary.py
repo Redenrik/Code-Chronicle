@@ -29,7 +29,7 @@ def is_path_excluded(filepath, root, ignore_patterns):
 
 def get_file_paths(directory, ignore_patterns):
     file_paths = []
-    allowed_extensions = [".doc", ".txt", ".json", ".py", ".env", ".bat", ".html", ".js", ".css"]
+    allowed_extensions = [".doc", ".txt", ".json", ".py", ".env", ".bat", ".html", ".js", ".css", "ini"]
 
     for root, dirs, files in os.walk(directory):
         # Remove ignored directories from dirs to avoid further exploration
