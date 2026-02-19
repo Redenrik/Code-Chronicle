@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 import platform
+import traceback
 from datetime import datetime
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QFileDialog, QLineEdit, QCheckBox)
@@ -16,8 +17,11 @@ from file_explorer_summary import (
 )
 
 
-def open_path(path: str) -> None:
-    """Open a file or directory with the default application."""
+def open_path(path: str) -> bool:
+    """Open a file or directory with the default application.
+
+    Returns ``True`` on success, ``False`` if no launcher could be executed.
+    """
     system = platform.system()
     try:
         if system == "Windows":
@@ -26,8 +30,10 @@ def open_path(path: str) -> None:
             subprocess.Popen(["open", path])
         else:
             subprocess.Popen(["xdg-open", path])
+        return True
     except Exception:
-        pass
+        traceback.print_exc()
+        return False
 
 def get_main_folder():
     # Assuming gui.py is located in src folder in the main project folder
@@ -114,6 +120,7 @@ class ProjectExplorer(QWidget):
     def open_history_folder(self):
         main_folder = get_main_folder()
         history_folder = os.path.join(main_folder, "chronicle-history")
+        os.makedirs(history_folder, exist_ok=True)
         open_path(history_folder)
 
 
