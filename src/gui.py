@@ -3,11 +3,31 @@
 import os
 import sys
 import subprocess
+import platform
 from datetime import datetime
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QFileDialog, QLineEdit, QCheckBox)
 
-from file_explorer_summary import get_ignore_patterns, list_files, create_output_file, get_file_paths
+from file_explorer_summary import (
+    get_ignore_patterns,
+    list_files,
+    create_output_file,
+    get_file_paths,
+)
+
+
+def open_path(path: str) -> None:
+    """Open a file or directory with the default application."""
+    system = platform.system()
+    try:
+        if system == "Windows":
+            os.startfile(path)
+        elif system == "Darwin":
+            subprocess.Popen(["open", path])
+        else:
+            subprocess.Popen(["xdg-open", path])
+    except Exception:
+        pass
 
 def get_main_folder():
     # Assuming gui.py is located in src folder in the main project folder
@@ -82,19 +102,19 @@ class ProjectExplorer(QWidget):
             output_file_path = os.path.join(history_folder, output_file_name)
             file_paths = get_file_paths(self.folder_name, ignore_patterns)
             create_output_file(file_paths, output_file_path)
-            subprocess.Popen(['notepad.exe', output_file_path], close_fds=True)
+            open_path(output_file_path)
 
         if self.index_checkbox.isChecked():
             output_file_name = f"{os.path.basename(self.folder_name)}_file-index_{timestamp}.txt"
             output_file_path = os.path.join(history_folder, output_file_name)
             list_files(self.folder_name, ignore_patterns, output_file_path)
-            subprocess.Popen(['notepad.exe', output_file_path], close_fds=True)
+            open_path(output_file_path)
 
 
     def open_history_folder(self):
         main_folder = get_main_folder()
         history_folder = os.path.join(main_folder, "chronicle-history")
-        os.startfile(history_folder)
+        open_path(history_folder)
 
 
 if __name__ == '__main__':

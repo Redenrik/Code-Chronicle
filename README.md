@@ -13,19 +13,19 @@ Code Chronicle is a Python-based project explorer that generates file indices an
 
 1. Clone the repository or download the source code.
 2. Navigate to the Code Chronicle folder.
-3. Double-click on `run.bat` to install the required dependencies and launch the application in one shot.
+3. Install dependencies: `pip install -r requirements.txt`.
+4. Run the GUI with `python src/gui.py` (requires a desktop environment).
+5. Or run the CLI with `python src/file_explorer_summary.py <folder>`.
 
-The `run.bat` script will:
+If no `--summary` / `--index` flags are provided, the CLI now generates both outputs by default.
 
-- Create a virtual environment (if not already present) in the project folder.
-- Activate the virtual environment.
-- Install the required dependencies from `requirements.txt`.
-- Run the Project Explorer script (gui.py).
+The optional Windows `run.bat` script still installs dependencies and launches the GUI in one step.
 
 ## Features
 
 - Browse and select a project folder.
 - Generate a script summary that consolidates relevant code and text files, making it easy to provide full projects to language models as input.
+- Preserve original source comments/docstrings in generated script summary outputs so code documentation is not lost.
 - Generate a file index that lists all files in the project, excluding those specified in the .gitignore file.
 - Automatically saves output files to a "chronicle-history" folder.
 
