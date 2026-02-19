@@ -1,16 +1,28 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 import subprocess
+import sys
 from datetime import datetime
 
-from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QFileDialog, QLineEdit, QCheckBox)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QFileDialog,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QWidget,
+)
 
 from file_explorer_summary import get_ignore_patterns, list_files, create_output_file, get_file_paths
 
 
 def open_path(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Path does not exist: {path}")
+
     if sys.platform.startswith('win'):
         os.startfile(path)
     elif sys.platform == 'darwin':
@@ -30,10 +42,13 @@ class ProjectExplorer(QWidget):
 
     def init_ui(self):
         self.setGeometry(100, 100, 400, 300)
-        self.setWindowTitle('Project Explorer')
+        self.setWindowTitle('Code Chronicle')
 
         self.label = QLabel('Select a project folder:', self)
         self.label.move(20, 20)
+
+        self.help_label = QLabel('Choose one or both outputs, then click Generate.', self)
+        self.help_label.move(20, 80)
 
         self.folder_edit = QLineEdit(self)
         self.folder_edit.textChanged.connect(self.set_folder_name)
@@ -45,9 +60,11 @@ class ProjectExplorer(QWidget):
 
         self.summary_checkbox = QCheckBox('Generate script summary', self)
         self.summary_checkbox.move(20, 100)
+        self.summary_checkbox.setChecked(True)
 
         self.index_checkbox = QCheckBox('Generate file index', self)
         self.index_checkbox.move(20, 150)
+        self.index_checkbox.setChecked(True)
 
         self.generate_button = QPushButton('Generate', self)
         self.generate_button.move(20, 200)
@@ -66,7 +83,7 @@ class ProjectExplorer(QWidget):
 
     def set_folder_name(self, text):
         self.folder_name = text.strip()
-        if self.folder_name:
+        if self.folder_name and os.path.isdir(self.folder_name):
             self.generate_button.setEnabled(True)
         else:
             self.generate_button.setEnabled(False)
@@ -79,6 +96,18 @@ class ProjectExplorer(QWidget):
             self.generate_button.setEnabled(True)
 
     def generate_files(self):
+        if not os.path.isdir(self.folder_name):
+            QMessageBox.warning(self, "Invalid folder", "Please choose an existing project folder.")
+            return
+
+        if not self.summary_checkbox.isChecked() and not self.index_checkbox.isChecked():
+            QMessageBox.information(
+                self,
+                "Nothing selected",
+                "Please enable at least one output: script summary and/or file index.",
+            )
+            return
+
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         main_folder = get_main_folder()
         history_folder = os.path.join(main_folder, "chronicle-history")
@@ -91,19 +120,31 @@ class ProjectExplorer(QWidget):
             output_file_path = os.path.join(history_folder, output_file_name)
             file_paths = get_file_paths(self.folder_name, ignore_patterns)
             create_output_file(file_paths, output_file_path)
-            open_path(output_file_path)
+            try:
+                open_path(output_file_path)
+            except Exception as exc:  # pragma: no cover - depends on desktop environment
+                QMessageBox.warning(self, "Open failed", f"Summary created but could not open file.\n\n{exc}")
 
         if self.index_checkbox.isChecked():
             output_file_name = f"{os.path.basename(self.folder_name)}_file-index_{timestamp}.txt"
             output_file_path = os.path.join(history_folder, output_file_name)
             list_files(self.folder_name, ignore_patterns, output_file_path)
-            open_path(output_file_path)
+            try:
+                open_path(output_file_path)
+            except Exception as exc:  # pragma: no cover - depends on desktop environment
+                QMessageBox.warning(self, "Open failed", f"Index created but could not open file.\n\n{exc}")
+
+        QMessageBox.information(self, "Done", f"Files generated in:\n{history_folder}")
 
 
     def open_history_folder(self):
         main_folder = get_main_folder()
         history_folder = os.path.join(main_folder, "chronicle-history")
-        open_path(history_folder)
+        os.makedirs(history_folder, exist_ok=True)
+        try:
+            open_path(history_folder)
+        except Exception as exc:  # pragma: no cover - depends on desktop environment
+            QMessageBox.warning(self, "Open failed", f"Could not open history folder.\n\n{exc}")
 
 
 if __name__ == '__main__':

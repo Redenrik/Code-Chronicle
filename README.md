@@ -1,30 +1,35 @@
 # Code Chronicle
 
-Code Chronicle is a Python-based project explorer that generates file indices and script summaries while respecting `.gitignore` patterns. The project contains a user-friendly GUI built with PyQt5, allowing users to browse folders, select options, and create outputs. This tool can simplify the process of providing full projects to language models (e.g., GPT) as input by aggregating relevant code and text files into a single summary file.
+Code Chronicle is a Python-based project explorer that generates file indices and script summaries while respecting `.gitignore` patterns. The project includes a GUI built with PyQt5 so users can browse folders, choose output options, and generate files without memorizing CLI flags.
 
-## Installation and Usage
+## What it generates
 
-### Prerequisites
+- `scripts-list.txt`: concatenated content of supported project files, with a short header.
+- `00_file-index.txt`: readable tree index of files/folders.
 
-- Python 3.x
-- pip (Python package manager)
+Both outputs honor `.gitignore` exclusions (except negation rules such as `!pattern`, which are intentionally unsupported).
 
-### Install and Run GUI
+## Quick start (no terminal required)
 
-1. Clone the repository or download the source code.
-2. Navigate to the Code Chronicle folder.
-3. Double-click on `run.bat` to install the required dependencies and launch the application in one shot.
+### Windows
 
-The `run.bat` script will:
+1. Download/clone the project.
+2. Double-click `run.bat`.
 
-- Create a virtual environment (if not already present) in the project folder.
-- Activate the virtual environment.
-- Install the required dependencies from `requirements.txt`.
-- Run the Project Explorer script (`gui.py`).
+### macOS / Linux
 
-### CLI Usage
+1. Download/clone the project.
+2. Double-click `run.sh` (or run `./run.sh` once from Terminal if your file manager requires execute permission confirmation).
 
-You can also generate outputs from the command line:
+The launcher scripts:
+
+- create a local virtual environment in `.venv` (inside the project folder),
+- install dependencies from `requirements.txt` into that virtual environment,
+- run the GUI.
+
+This keeps dependencies local to the project and avoids global package pollution.
+
+## CLI usage
 
 ```bash
 python src/file_explorer_summary.py [folder] [--summary] [--index] [--output OUTPUT_DIR]
@@ -35,18 +40,25 @@ python src/file_explorer_summary.py [folder] [--summary] [--index] [--output OUT
 - `--index`: generate `00_file-index.txt`.
 - `--output`: output directory for generated files. Defaults to the current directory.
 
-If neither `--summary` nor `--index` is provided, Code Chronicle generates **both** outputs by default.
+If neither `--summary` nor `--index` is provided, Code Chronicle generates both outputs.
 
 ## Features
 
-- Browse and select a project folder.
-- Generate a script summary that consolidates relevant code and text files.
-- Summary exports include a short documentation header and preserve source content verbatim, including comments, docstrings, and blank lines.
-- Generate a readable tree-like file index with stable sorting.
-- Respect `.gitignore` rules (including directory patterns) while traversing files.
-- Automatically save GUI output files to a `chronicle-history` folder.
-- Open generated files/folders with platform-aware behavior (`os.startfile` on Windows, `open` on macOS, and `xdg-open` on Linux).
+- Folder picker-based GUI.
+- Defaults to generating both summary and index.
+- Prevents running with invalid folders.
+- Writes GUI outputs into `chronicle-history/`.
+- Platform-aware opening behavior:
+  - Windows: `os.startfile`
+  - macOS: `open`
+  - Linux: `xdg-open`
+- Stable sorting for deterministic outputs.
+
+## Notes
+
+- Supported summary extensions: `.doc`, `.txt`, `.json`, `.py`, `.env`, `.bat`, `.html`, `.js`, `.css`, `.ini`.
+- `.gitignore` negation entries (`!`) are skipped by design.
 
 ## Contributing
 
-Feel free to submit issues, feature requests, or pull requests. Your feedback and contributions are welcome and appreciated.
+Issues and pull requests are welcome.
