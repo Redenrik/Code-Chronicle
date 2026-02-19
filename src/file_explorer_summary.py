@@ -98,6 +98,11 @@ def create_output_file(file_paths: List[str], output_file_name: str = "scripts-l
     *not* filtered so inline documentation is preserved in the generated report.
     """
     with open(output_file_name, "w", encoding="utf-8") as output_file:
+        output_file.write(
+            "# Code Chronicle export\n"
+            "# Source text is copied verbatim, including inline comments/docstrings.\n\n"
+        )
+
         for file_path in file_paths:
             output_file.write(f"########## {file_path} ##########\n")
             with open(file_path, "r", encoding="utf-8", errors="ignore") as input_file:

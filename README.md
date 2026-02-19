@@ -26,6 +26,7 @@ The optional Windows `run.bat` script still installs dependencies and launches t
 - Browse and select a project folder.
 - Generate a script summary that consolidates relevant code and text files, making it easy to provide full projects to language models as input.
 - Preserve original source comments/docstrings in generated script summary outputs so code documentation is not lost.
+- Prefix exported summary files with a short documentation header describing verbatim export behavior.
 - Generate a file index that lists all files in the project, excluding those specified in the .gitignore file.
 - Automatically saves output files to a "chronicle-history" folder.
 
