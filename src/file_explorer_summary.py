@@ -29,6 +29,11 @@ def _normalize_relpath(path):
 
 
 def _read_gitignore_patterns(selected_folder):
+    """Read supported .gitignore patterns.
+
+    Supported: basename, directory-only, wildcard, and anchored patterns.
+    Unsupported: negation rules (lines starting with '!').
+    """
     patterns = []
     gitignore_file = os.path.join(selected_folder, ".gitignore")
     if not os.path.exists(gitignore_file):
@@ -54,6 +59,7 @@ def get_ignore_patterns(selected_folder):
 
 
 def _pattern_matches(rel_path, pattern, is_dir):
+    """Match path with a practical subset of .gitignore semantics."""
     rel_path = _normalize_relpath(rel_path)
     pattern = pattern.replace("\\", "/")
     if not pattern:
@@ -132,10 +138,23 @@ def create_output_file(file_paths, output_file_name="scripts-list.txt"):
 def _build_tree_lines(startpath, ignore_patterns):
     root_name = os.path.basename(os.path.abspath(startpath))
     lines = [f"{root_name}/"]
+    visited_real_paths = set()
 
     def walk_dir(path, prefix=""):
+        real_path = os.path.realpath(path)
+        if real_path in visited_real_paths:
+            lines.append(f"{prefix}└── ⚠ symlink loop skipped")
+            return
+        visited_real_paths.add(real_path)
+
         entries = []
-        for name in sorted(os.listdir(path)):
+        try:
+            names = sorted(os.listdir(path))
+        except (PermissionError, OSError):
+            lines.append(f"{prefix}└── ⚠ permission denied")
+            return
+
+        for name in names:
             full_path = os.path.join(path, name)
             if is_path_excluded(full_path, startpath, ignore_patterns):
                 continue
